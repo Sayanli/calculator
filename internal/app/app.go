@@ -1,34 +1,30 @@
 package app
 
 import (
-	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 
-	"github.com/go-chi/chi"
-	"github.com/sayanli/calculator/internal/entity"
+	"github.com/sayanli/calculator/internal/controller/httpserver"
+	"github.com/sayanli/calculator/internal/service"
 )
-
-func InstructionsHandler(w http.ResponseWriter, r *http.Request) {
-	var instructions []entity.Instruction
-
-	err := json.NewDecoder(r.Body).Decode(&instructions)
-	if err != nil {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
-		return
-	}
-
-	for i, instr := range instructions {
-		fmt.Println(i, instr.Type)
-	}
-
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Instructions processed successfully"))
-}
 
 func Run() {
 	fmt.Println("Calculator is running...")
-	r := chi.NewRouter()
-	r.Post("/", InstructionsHandler)
-	http.ListenAndServe(":8080", r)
+	s := service.NewServices()
+	httpserver := httpserver.NewHttpServer(s.Calculation)
+	go func() {
+		log.Print("Http server started on port 8080")
+		http.ListenAndServe(":8080", httpserver.Router())
+	}()
+
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, syscall.SIGTERM, syscall.SIGINT)
+
+	<-stop
+
+	log.Print("Server stopped")
 }
