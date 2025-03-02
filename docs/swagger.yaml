@@ -1,0 +1,51 @@
+basePath: /
+definitions:
+  entity.Result:
+    properties:
+      value:
+        type: integer
+      var:
+        type: string
+    type: object
+  errors.HTTPError:
+    properties:
+      code:
+        example: 400
+        type: integer
+      message:
+        example: status bad request
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: notmydev@gmail.com
+    name: Ilya Veselov
+  description: This is a service for performing basic arithmetic operations.
+  title: Calculator Service
+  version: "1.0"
+paths:
+  /v1/calculate:
+    post:
+      consumes:
+      - application/json
+      description: Calculate instructions
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Result'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.HTTPError'
+      summary: Calculate instructions
+      tags:
+      - calculation
+swagger: "2.0"

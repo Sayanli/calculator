@@ -18,6 +18,15 @@ func NewCalculationRouter(calculationService service.Calculation) *CalculationRo
 	}
 }
 
+// @Summary Calculate instructions
+// @Description Calculate instructions
+// @Tags calculation
+// @Accept json
+// @Produce json
+// @Success 200 {object} entity.Result
+// @Failure 400 {object} errors.HTTPError
+// @Failure 500 {object} errors.HTTPError
+// @Router /v1/calculate [post]
 func (c *CalculationRouter) Calculate(w http.ResponseWriter, r *http.Request) {
 	var instructions []entity.Instruction
 
