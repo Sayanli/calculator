@@ -1,65 +1,95 @@
 package service
 
 import (
+	"context"
 	"fmt"
+	"sync"
 
 	"github.com/sayanli/calculator/internal/entity"
+	"golang.org/x/sync/errgroup"
 )
 
 type CalculationService struct {
+	sync.Mutex
+	cond *sync.Cond
 }
 
 func NewCalculationService() *CalculationService {
-	return &CalculationService{}
+	service := &CalculationService{}
+	service.cond = sync.NewCond(&service.Mutex)
+	return service
 }
 
 func (s *CalculationService) CompleteInstructions(instructions []entity.Instruction) ([]entity.Result, error) {
-	result := make([]entity.Result, 0, len(instructions))
 	intermediateValues := make(map[string]int)
+	results := make([]entity.Result, 0, len(instructions))
+	tmp := make([]string, 0, len(instructions))
+	g, ctx := errgroup.WithContext(context.Background())
+	g.SetLimit(1000)
 	for _, instruction := range instructions {
 		if instruction.Type == entity.CalcType {
-			if err := Calculate(intermediateValues, instruction); err != nil {
-				return nil, err
-			}
-		} else if instruction.Type == entity.PrintType {
-			result = append(result, entity.Result{
-				Var:   instruction.Var,
-				Value: intermediateValues[instruction.Var],
+			g.Go(func() error {
+				if ctx.Err() != nil {
+					return ctx.Err()
+				}
+				return s.calculate(intermediateValues, instruction)
 			})
+		} else if instruction.Type == entity.PrintType {
+			tmp = append(tmp, instruction.Var)
 		}
 	}
-	return result, nil
+	if err := g.Wait(); err != nil {
+		return nil, err
+	}
+	for _, varName := range tmp {
+		if _, ok := intermediateValues[varName]; !ok {
+			return nil, fmt.Errorf("variable %s not found", varName)
+		}
+		results = append(results, entity.Result{
+			Var:   varName,
+			Value: intermediateValues[varName],
+		})
+	}
+	return results, nil
 }
 
-func Calculate(variables map[string]int, instruction entity.Instruction) error {
-	leftValue, err := getValue(variables, instruction.Left)
+func (s *CalculationService) calculate(intermediateValues map[string]int, instruction entity.Instruction) error {
+	leftValue, err := s.getValue(intermediateValues, instruction.Left)
 	if err != nil {
 		return err
 	}
-	rightValue, err := getValue(variables, instruction.Right)
+	rightValue, err := s.getValue(intermediateValues, instruction.Right)
 	if err != nil {
 		return err
 	}
+	var variable int
 	switch instruction.Op {
 	case entity.AddOperation:
-		variables[instruction.Var] = leftValue + rightValue
+		variable = leftValue + rightValue
 	case entity.SubOperation:
-		variables[instruction.Var] = leftValue - rightValue
+		variable = leftValue - rightValue
 	case entity.MulOperation:
-		variables[instruction.Var] = leftValue * rightValue
+		variable = leftValue * rightValue
 	default:
 		return fmt.Errorf("Неизвестный оператор")
 	}
+	s.Lock()
+	intermediateValues[instruction.Var] = variable
+	s.cond.Broadcast()
+	s.Unlock()
 	return nil
 }
 
-func getValue(variables map[string]int, input interface{}) (int, error) {
+func (s *CalculationService) getValue(intermediateValues map[string]int, input interface{}) (int, error) {
 	switch v := input.(type) {
 	case string:
-		if value, ok := variables[v]; ok {
-			return value, nil
-		} else {
-			return 0, fmt.Errorf("Переменная %s не найдена", v)
+		s.Lock()
+		defer s.Unlock()
+		for {
+			if value, ok := intermediateValues[v]; ok {
+				return value, nil
+			}
+			s.cond.Wait()
 		}
 	case int:
 		return v, nil
