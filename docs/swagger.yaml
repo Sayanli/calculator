@@ -27,20 +27,20 @@ paths:
   /calculate:
     post:
       consumes:
-      - application/json
+        - application/json
       description: Calculate instructions
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
             items:
-              $ref: '#/definitions/entity.Result'
+              $ref: "#/definitions/entity.Result"
             type: array
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httpserver.ErrorResponse'
+            $ref: "#/definitions/httpserver.ErrorResponse"
       summary: Calculate instructions
 swagger: "2.0"

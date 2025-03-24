@@ -21,7 +21,7 @@ func NewHttpServer(calculationService service.Calculation) *HttpServer {
 // @version 1.0
 // @description This is a simple calculator API that provides basic arithmetic operations.
 // @contact.name Ilya Veselov
-// @host localhost:8080
+// @host localhost:1323
 // @BasePath /v1
 func (h *HttpServer) Router() *chi.Mux {
 	r := chi.NewRouter()

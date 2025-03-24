@@ -10,14 +10,23 @@ const docTemplate = `{
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
         "contact": {
+<<<<<<< HEAD
             "name": "Ilya Veselov"
+=======
+            "name": "Ilya Veselov",
+            "email": "notmydev@gmail.com"
+>>>>>>> 5eb6183789bd260060346633ba43e2e76018b474
         },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+<<<<<<< HEAD
         "/calculate": {
+=======
+        "/v1/calculate": {
+>>>>>>> 5eb6183789bd260060346633ba43e2e76018b474
             "post": {
                 "description": "Calculate instructions",
                 "consumes": [
@@ -26,21 +35,41 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
+<<<<<<< HEAD
+=======
+                "tags": [
+                    "calculation"
+                ],
+>>>>>>> 5eb6183789bd260060346633ba43e2e76018b474
                 "summary": "Calculate instructions",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
+<<<<<<< HEAD
                             "type": "array",
                             "items": {
                                 "$ref": "#/definitions/entity.Result"
                             }
+=======
+                            "$ref": "#/definitions/entity.Result"
+>>>>>>> 5eb6183789bd260060346633ba43e2e76018b474
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
+<<<<<<< HEAD
                             "$ref": "#/definitions/httpserver.ErrorResponse"
+=======
+                            "$ref": "#/definitions/errors.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.HTTPError"
+>>>>>>> 5eb6183789bd260060346633ba43e2e76018b474
                         }
                     }
                 }
@@ -59,6 +88,7 @@ const docTemplate = `{
                 }
             }
         },
+<<<<<<< HEAD
         "httpserver.ErrorResponse": {
             "type": "object",
             "properties": {
@@ -70,6 +100,18 @@ const docTemplate = `{
                 },
                 "timestamp": {
                     "type": "string"
+=======
+        "errors.HTTPError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 400
+                },
+                "message": {
+                    "type": "string",
+                    "example": "status bad request"
+>>>>>>> 5eb6183789bd260060346633ba43e2e76018b474
                 }
             }
         }
