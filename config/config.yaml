@@ -1,0 +1,6 @@
+log:
+  env: prod
+http:
+  port: 8080
+grpc:
+  port: 50052

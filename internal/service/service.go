@@ -1,17 +1,22 @@
 package service
 
-import "github.com/sayanli/calculator/internal/entity"
+import (
+	"log/slog"
+
+	"github.com/sayanli/calculator/internal/entity"
+)
 
 type Calculation interface {
-	CompleteInstructions(instructions []entity.Instruction) ([]entity.Result, error)
+	CalculateInstructions(instructions []entity.Instruction) ([]entity.Result, error)
 }
 
 type Services struct {
+	log         *slog.Logger
 	Calculation Calculation
 }
 
-func NewServices() *Services {
+func NewServices(log *slog.Logger, golimit int) *Services {
 	return &Services{
-		Calculation: NewCalculationService(),
+		Calculation: NewCalculationService(log, golimit),
 	}
 }

@@ -1,0 +1,46 @@
+basePath: /v1
+definitions:
+  entity.Result:
+    properties:
+      value:
+        type: integer
+      var:
+        type: string
+    type: object
+  httpserver.ErrorResponse:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    name: Ilya Veselov
+  description: This is a simple calculator API that provides basic arithmetic operations.
+  title: Calculator API
+  version: "1.0"
+paths:
+  /calculate:
+    post:
+      consumes:
+      - application/json
+      description: Calculate instructions
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entity.Result'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpserver.ErrorResponse'
+      summary: Calculate instructions
+swagger: "2.0"
