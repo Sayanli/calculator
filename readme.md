@@ -62,7 +62,7 @@ curl --location --request POST 'http://localhost:8080/calculate' \
 
 proto файл для генерации клиента расположен [тут](https://github.com/Sayanli/calculator/blob/master/protos/proto/calculator/calculator.proto)
 
-Чтобы использовать переменную или число в LeftValue и RightValue использовался Value из google/protobuf/struct.proto, который может как числом, так и строкой.
+Чтобы использовать переменную или число в LeftValue и RightValue использовался Value из google/protobuf/struct.proto, который может быть как числом, так и строкой.
 
 Пример запроса при использовании Postman (для чисел использовать number_value, для строк string_value)
 ```
