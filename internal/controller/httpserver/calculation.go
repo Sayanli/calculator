@@ -15,6 +15,10 @@ type ErrorResponse struct {
 	Timestamp time.Time `json:"timestamp"`
 }
 
+type ResultResponse struct {
+	Result []entity.Result `json:"item"`
+}
+
 type CalculationRouter struct {
 	calculationService service.Calculation
 }
@@ -45,14 +49,18 @@ func (c *CalculationRouter) Calculate(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusUnprocessableEntity, "Empty instructions list")
 		return
 	}
+
 	result, err := c.calculationService.CalculateInstructions(instructions)
 	if err != nil {
 		writeError(w, http.StatusBadRequest, err.Error())
 		return
 	}
+	response := ResultResponse{
+		Result: result,
+	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(result)
+	json.NewEncoder(w).Encode(response)
 }
 
 func writeError(w http.ResponseWriter, statusCode int, message string) {
