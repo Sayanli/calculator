@@ -23,7 +23,7 @@ make swag // генерация swagger документации
 ```
 
 
-**Примеры запросов**
+**Примеры запросов HTTP**
 
 Запрос
 ```
@@ -55,5 +55,34 @@ curl --location --request POST 'http://localhost:8080/calculate' \
   "Code": 400,
   "Message": "Unknown variable",
   "Timestamp": "2025-03-20T12:34:56Z"
+}
+```
+
+**Работа с gRPC**
+
+proto файл для генерации клиента расположен [тут](https://github.com/Sayanli/calculator/blob/master/protos/proto/calculator/calculator.proto)
+
+Чтобы использовать переменную или число в LeftValue и RightValue использовался Value из google/protobuf/struct.proto, который может как числом, так и строкой.
+
+Пример запроса при использовании Postman (для чисел использовать number_value, для строк string_value)
+```
+{
+    "operations": [
+        {
+            "type": "calc",
+            "op": "+",
+            "var": "x",
+            "left": {
+                "number_value": 10
+            },
+            "right": {
+                "number_value": 6
+            }
+        },
+        {
+            "type": "print",
+            "var": "x"
+        }
+    ]
 }
 ```
