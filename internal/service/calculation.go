@@ -18,7 +18,6 @@ type CalculationService struct {
 type InstructionsState struct {
 	intermediateValues map[string]int64
 	mask               map[string]struct{}
-	pr                 []string
 	mu                 sync.Mutex
 	cond               *sync.Cond
 }
@@ -27,7 +26,6 @@ func NewInstructionsState() *InstructionsState {
 	state := &InstructionsState{
 		intermediateValues: make(map[string]int64),
 		mask:               make(map[string]struct{}),
-		pr:                 make([]string, 0),
 		mu:                 sync.Mutex{},
 	}
 	state.cond = sync.NewCond(&state.mu)
