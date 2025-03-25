@@ -1,4 +1,4 @@
-Записка по реализации [тут](https://github.com/sayanli/calculator/note.md)
+Записка по реализации [тут](https://github.com/sayanli/calculator/blob/master/note.md)
 
 - сервис поднимается через docker-compose;
 - тестами покрыто 27% кода (сервисный слой на 98%, httpserver на 57%);
